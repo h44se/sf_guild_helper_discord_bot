@@ -1,0 +1,6 @@
+{
+	"token": "add the token from the discord bot",
+	"clientid":"add the clientid from the discord bot",
+	"guilds": ["guild1", "guild2", "add or remove guilds here"],
+	"userWithSavePermission": ["add the userid from the users with a save permission here"]
+}

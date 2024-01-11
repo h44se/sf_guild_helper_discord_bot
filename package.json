@@ -1,0 +1,19 @@
+{
+  "name": "sf-guild-helper-discord-bot",
+  "version": "1.0.0",
+  "description": "A discord bot with the intention to help to manage a guild.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js",
+    "dev": "nodemon index.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^1.6.2",
+    "date-fns": "^2.30.0",
+    "discord.js": "^14.14.1",
+    "nodemon": "^3.0.1"
+  }
+}
