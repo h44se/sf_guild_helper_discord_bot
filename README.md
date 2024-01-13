@@ -1,26 +1,77 @@
-# Setup 
+# sf_guild_helper_discord_bot
 
-0. Install node.js https://nodejs.org/en/download/ or use nvm https://github.com/nvm-sh/nvm
-0. get sure it is working with node -v
-1. Login into https://discord.com/developer
-2. Click "new Application"
-3. Click OAuth2
-4. Copy ClientID
-5. Click Bot
-6. Click "Reset Token"
-7. Copy Token
-8. Change Name and Avatar from Bot if you want to
-9. Scroll down and activate "Message Content Intent"
-10. Scroll further down and Activate "Use Slash Commands" and "Send Messages" in "Test Permissions" and copy the Permission Integer 
-11. Copy config.json.example to config.json
-12. Paste ClientID and Token to the desired fields
-13. Add in Guild Array one ore more guilds you want to handle
-14. Go to your own discord profile, right click -> Copy UserID and paste the id into userWithSavePermission
-15. save config.json
-16. `npm install` 
-17. `npm run start` 
-18. wait till you see something like 
+I'm not good with names. Lets call this Susi.
+Susi is a small private project of mine to support me in a Browser Game called Shakes & Fidget and it aims to help with one specific problem: Activity measurement of guild members in guild fights.
+
+We all have this problem, some guild members are active, some are present and some are.. yeah. But it is hard to monitor which one nether signs up for guild fights and so this application was born. With the help of discord as a platform, sftools as a helper and .har files this discord bot is able to check which guild member(s) did not show up to guild fights.
+
+Be aware, this is not a automation or a "start and forget" application. You still need to capture the fights, update the list of guild members and need to feed the bot with fights. I just liked the interface discord is providing and the posibility to share this project through discord servers with different guilds.
+
+She got developed with the intent to use one instance of the bot for one or multiple guilds.
+
+## Project Status
+
+Susi got developed on a rainy evening and is work in progress. There is not a lot of documentation inside the code, some things like helptexts are plain in german, the language of these texts are not configurable, this README needs a lot of love and some commands are tailored to me and not to everyone.
+
+## Todo
+
+- [ ] Finish README
+- [ ] Add code documentation and remove german comments
+
+## Setup Discord Application
+
+Before we start to configure, build and run our bot we need to register her on discord. For this please open
+<https://discord.com/login?redirect_to=%2Fdevelopers%2Fapplications>
+and Login with your Discord Account.
+
+After you successfully login press on the top right, next to your Avatar on "New Application" and give your Application a Name.
+On the next page you can do a lot of things which are optional like setting up an Avatar for the bot, changing the name, adding a description and so on. But we will move on to the "OAuth2" category where we will find an Client ID which we need to copy for later.
+Now we need to get a private Token to authenticate our bot, for this navigate to "Bot" on the sidebar and press "Reset Token" and copy the token too.
+
+On the same page we need to scroll down to "Message Content Intent" and activate this permission. You don't need to save manual, this will happen automatically.
+
+Again, on the same page (Category Bot), scroll further down till you find "Bot Permissions" and activate the fields "Use Slash Commands" and "Send Messages" in the row "TEXT PERMISSIONS" and copy the PERMISSIONS INTEGER Below the checkboxes.
+
+## Setup config.json
+
+In the same directory as this file you will find a `config.json.example`, please copy or rename this file to `config.json`.
+Replace the placeholder value for `token` with the token you copied earlier.
+Replace the placeholder value for `clientid` with the Client ID you copied earlier.
+Modify the placeholder values for the `guild` array. At least one guild MUST BE there, you can name it like you want.
+
+`userWithSavePermission` is a information i use right now to handle situations where the bot is accessible by a lot of users but only a few should write informations "into" the bot like the current guild officers. Like for `guilds` this is an array and can be filled up with a lot of discord user. For this i use the discord user id and to get this id you need to activate, as far as i know, the discord developer mode: <https://beebom.com/how-enable-disable-developer-mode-discord/> (Step 1 to 3). After this is done press right click on a member of your discord server to copy his id (should be the last option on the context menu) and paste it into the array of `userWithSavePermission`.
+
+## How can you run this bot now?
+
+Endless possibilities! You could run her locally on your pc from a cmdline, you could start her on an small server controlled through systemd and she is also prepared to run inside an Docker container.
+
+### Setup Docker
+
+IMHO one of the easiest things if you know what to do. If you want to try out docker please visit <https://www.docker.com/get-started/> and when you can run the following command
+
+```bash
+docker run hello-world
 ```
+
+successfully continue. After your local instance of docker is running please copy and execute inside a shell in the same directory as this file
+
+```bash
+docker build -t sf_discord_bot .
+docker run --restart=always --name sf_discord_bot -v sf_discord_bot_storage:/usr/src/app/storage -d sf_discord_bot
+```
+
+In theory everything should working now and with the command
+
+```bash
+docker logs sf_discord_bot
+```
+
+you should see something like
+
+```txt
+> sf-guild-helper-discord-bot@1.0.0 start
+> node index.js
+
 Got command: checkfight
 Got command: checkhistory
 Got command: getpreset
@@ -28,29 +79,96 @@ Got command: listmembers
 Got command: savemembers
 Started refreshing 5 application (/) commands.
 Successfully reloaded 5 application (/) commands.
-discord | Ready! Logged in as <yourbotname>#0038
+discord | Ready! Logged in as <yourbotname>#<id e.g. 4242>
 ```
-19. Invite the bot to your own server, use the following Link for this:
-https://discord.com/api/oauth2/authorize?client_id=<clientid>&permissions=<permissions from step 10>&scope=bot%20applications.commands
 
-ATTN: It may take a few minutes till the commands are visible or get changed after changes in the code. Sometimes it also helps to restart the discord client.
+### Setup directly with node
 
-# Save Guild Members
-1. Go to https://sftools.mar21.eu/ -> Statistics -> Files
-2. Press Import from Game
-3. Add your own credentials and select as Capture mode "Capture own + guild characters"
-4. Wait till the scan is done
-5. Select the newly done Scan and press "Export selected", select "JSON File" and press Export (It does not matter for the bot if you export only public data)
-6. Go to your Discord Server and write into the chat /savemembers
-7. Select the guild you want to override 
-8. Select the json file you exported earlier from sftools
-9. press enter
-10. After a short moment you should get an answer with the amount of found members and an array with all of them
-11. If you don't trust the output you can verify that the members got saved with the /listmembers command or by checking ./storage/<guild>.json
+Docker is cool because you don't need to install a lot of things but sometimes you can't use it like on older kernels or in some virtual envs..
+In such cases install node.js directly on your system. Please refer to <https://nodejs.org/en/download/> or <https://github.com/nvm-sh/nvm> and continue with this when you can successfully run `node -v`.
 
-ATTN: You need to repeat this every time the members change in your guild.
+After node.js runs on your system open a shell and run
 
-# checkfight
+```bash
+npm install
+```
+
+This installs all dependencies like the discord library i use and after this is finished you can start the bot with
+
+```bash
+npm run start
+```
+
+and like on the Docker way of life you should see something like the following output
+
+```txt
+> sf-guild-helper-discord-bot@1.0.0 start
+> node index.js
+
+Got command: checkfight
+Got command: checkhistory
+Got command: getpreset
+Got command: listmembers
+Got command: savemembers
+Started refreshing 5 application (/) commands.
+Successfully reloaded 5 application (/) commands.
+discord | Ready! Logged in as <yourbotname>#<id e.g. 4242>
+```
+
+## Let the Bot land on your server
+
+Nearly done! After our bot is running we can invite him onto one or multiple server. Do you remember the PERMISSIONS INTEGER you copied earlier in `Setup Discord Application`? Now we need this piece of information to let discord know with which privilegs we want to invite the bot on a server.
+
+Please change `<clientid>` and if you have a different PERMISSIONS INTEGER than 2147485696 `<PERMISSIONS INTEGER>` too on the following url and open the url in an browser.
+
+```txt
+https://discord.com/api/oauth2/authorize?client_id=<clientid>&permissions=<PERMISSIONS INTEGER>&scope=bot%20applications.commands
+
+https://discord.com/api/oauth2/authorize?client_id=<clientid>&permissions=2147485696&scope=bot%20applications.commands
+```
+
+You may need to login into Discord if you aren't already logged in, select the server you want to let the bot join and follow the steps off the wizard. Your Bot should be now on your server, congratulations!
+
+## How to use the bot?
+
+You may know that some bots use a command structure like `!ping` or `.ping` as interface - we don't do this here.
+
+We use Slashcommands and you can see and interact with them if you start to write a slash in the text input, an box with all available Bots and Commands should get opened. If you have a lot of bots on your server you can select your Bot on the left side of the box.
+
+![Image of how the interaction box of discord should look like](./doc/bot_box.png)
+
+## Commands
+
+### /savemembers
+
+This is the command you should try out at first after the setup. With this command you can update the members of your guild. There is only a save but this command will create and update everything we need and it works only with the whole guild and not single members.
+
+To make this step a bit more easier (for me) i decided to use the help of an awesome project: <https://sftools.mar21.eu/>
+
+If you don't use sftools already, shame on you!
+
+Quick run down:
+
+1. Open <https://sftools.mar21.eu/stats.html>
+2. Navigate on the top to "Files"
+3. Click on "Import from Game"
+4. Insert your Username and Password and select as Capture mode "Capture own + guild characters"
+5. Press on continue and wait till the scan is finished
+6. Select the freshly made scan through the small round checkbox on the left of "Timestamp"
+7. Press "Export selected" and select as Format "JSON File".
+8. You can also select the checkbox for "Export only public data..." (The bot does not save any data except the names of guild members, but better save than sorry)
+9. Press export
+
+After we have our guild stored inside a small and compact json file open Discord and go to a server / channel where this bot is present and type into the text input `/savemembers`.
+Like in `How to use the bot`? shown you should see a small box on the bottom of your screen, select the guild you want to update and select our exported .json file and press enter.
+After a few second the bot should response to your with an success message and an information about how many guild members are now stored and which ones she found.
+
+Every time the members of your guild change you need to do this step again.
+
+### /checkfight
+
+TODO REWRITE
+
 1. Open the game
 2. open the dev tools and open the "Network" Tab
 3. Navigate to the fight mails
@@ -60,8 +178,9 @@ ATTN: You need to repeat this every time the members change in your guild.
 7. save the requests as .har file
 8. Open Discord and go to the channels your bot lives
 9. write /checkfight , select an guild and select the created .har file and press enter
-10. After a short moment you should see something like 
-```
+10. After a short moment you should see something like
+
+```txt
 Von 50 Mitgliedern wurden nur 47 erkannt.
 Es fehlten: Karondor, TankHulk, Lasresvese
 ```
@@ -69,9 +188,21 @@ Es fehlten: Karondor, TankHulk, Lasresvese
 Important: Since the addition of the fightadditionalplayers header inside the fight request, the player with the highest level will not be in this list if your guild is strong enough and he does not need to fight. For this reason we store the player with the highest level additionally to all players when using /savemembers and using this info in /checkfight if ignore is set to true. 
 This is kinda experimental at this point because i'm not entierly sure how the game handles this when multiple players will have the same level.. but i am optimistic that the current solution is also suitable for this
 
-# checkhistory
+### /listmembers
+
+TODO
+
+### /getpreset
+
+TODO
+
+### /checkhistory
+
+TODO REWRITE
+
 Just a small helper command for myself to check how often people were not able to press two fucking buttons.. Input is a .txt file which looks like this:
-```
+
+```txt
 Mo: JustChris, Chris, WeißerAdler, oNxKz, Vinux42
 Di: Fitsch13, Meechy, InTrALeX, VivatKaczy
 Mi: oNxKz, Meechy, InTrALeX, det0xka
@@ -80,8 +211,10 @@ Mo: Shanks, Lasresvese, Vinux42
 Di: nein, Crankiee, oNxKz
 Mi: Vinux42
 ```
+
 Each line represents one fight, and as output you get something like
-```
+
+```txt
 Ergebnis:
 Kämpfe erfasst: 35
 Vinux42: 8 (23%)
@@ -89,7 +222,9 @@ Lasresvese: 7 (20%)
 TankHulk: 7 (20%)
 InTrALeX: 6 (17%)
 ```
+
 Which represents how often members did not helped in guild fights. Only guild members who are currently in ./storage.<guild>.json get listed
 
-# getpreset
-Another small helper, create my preset message which i can copy&paste into our designated discord channel to monitor the fight activity. Dates get adjusted automatically.
+## I added / changed commands and they do not get updated
+
+In theory every time this bot starts she updates all her commands but sometimes Discord needs a few minutes to update them on the client too. Sometimes it helped to close the Discord Client completely and after an fresh start you can see and use the updated commands.
