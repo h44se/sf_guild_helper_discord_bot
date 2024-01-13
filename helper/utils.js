@@ -30,19 +30,7 @@ function getFormattedMondeyAndSunday(formatString = 'dd.MM.'){
     return {mondayFormatted, sundayFormatted}
 }
 
-function modifyValueOfArrayElementsWithWrongAmountOfPositions(array) {
-    return array.map(number => {
-      const numberString = number.toString();
-        if (numberString.length === 4) {
-        return parseInt(numberString.substring(1));
-      }
-        return number;
-    });
-  }
-
-
 module.exports = {
     getGuildConfigForChoices: getGuildConfigForChoices,
-    getFormattedMondeyAndSunday: getFormattedMondeyAndSunday,
-    modifyValueOfArrayElementsWithWrongAmountOfPositions: modifyValueOfArrayElementsWithWrongAmountOfPositions
+    getFormattedMondeyAndSunday: getFormattedMondeyAndSunday
 }

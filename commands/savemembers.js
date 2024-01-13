@@ -40,17 +40,14 @@ async function handleGuildSaveCommand(server, attachment){
 
         //if you want to ignore this whole thing exclude the option "ignore" in checkFight.js from the SlashCommandBuilder. We still store the player but don't use him
 
-        const startIndex = 64
-        const playerLevelsUnmodified = body.groups[0].save.splice(startIndex,body.groups[0].names.length)
-        const playerLevelsModified = modifyValueOfArrayElementsWithWrongAmountOfPositions(playerLevelsUnmodified) //for reasons some player levels are not 354 instead they are stored as 3354
-
-        const playerIndexWithHighestLevel = playerLevelsModified.indexOf(Math.max(...playerLevelsModified))
+        const playerLevels = body.groups[0].save.slice(64, 114).map(level => level % 1000)
+        const playerIndexWithHighestLevel = playerLevels.indexOf(Math.max(...playerLevels))
 
         let jsonForFile = {
             members: body.groups[0].names,
             memberWithHighestLevel: body.groups[0].names[playerIndexWithHighestLevel]
         }
-
+        //console.log(`player with max level: ${jsonForFile.memberWithHighestLevel} with level ${playerLevels[playerIndexWithHighestLevel]}`)
         await writeFileSync(`./storage/${server}.json`,JSON.stringify(jsonForFile))
     }catch(error){
         return 'Error while writing guild: ' + error
