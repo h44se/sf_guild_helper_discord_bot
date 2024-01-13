@@ -1,7 +1,7 @@
 const { SlashCommandBuilder } = require('discord.js');
 const { readFileSync } = require('../helper/file-utils');
 const { getGuildConfigForChoices } = require('../helper/utils');
-const axios = require('axios')
+const axios = require('axios');
 
 function getArrayForMembersWhoMissedFights(guildJson, historyData){
     let linesCounted = 0;
@@ -49,27 +49,27 @@ function getArrayForMembersWhoMissedFights(guildJson, historyData){
     return {
         fightsCounted: linesCounted,
         sortedResult
-    }
+    };
 }
 
 async function handleCheckHistoryCommand(server, attachment){
     try{
-        const url = attachment.url
-        let body = await axios.get(url).then(res => res.data)
+        const url = attachment.url;
+        let body = await axios.get(url).then(res => res.data);
 
         const data = readFileSync(`./storage/${server}.json`);
         const guild = JSON.parse(data);
        
-        let result = getArrayForMembersWhoMissedFights(guild, body)
+        let result = getArrayForMembersWhoMissedFights(guild, body);
         //build response weil schöner so
-        let reply = `Ergebnis:\nKämpfe erfasst: ${result.fightsCounted}\n`
+        let reply = `Ergebnis:\nKämpfe erfasst: ${result.fightsCounted}\n`;
         Object.keys(result.sortedResult).forEach(member => {
-            reply += `${member}: ${result.sortedResult[member]} (${Math.round((result.sortedResult[member] / result.fightsCounted) * 100)}%)\n`
+            reply += `${member}: ${result.sortedResult[member]} (${Math.round((result.sortedResult[member] / result.fightsCounted) * 100)}%)\n`;
         });
 
         return reply;
     }catch(error){
-        return 'Error while writing guild: ' + error
+        return 'Error while writing guild: ' + error;
     }
 }
 

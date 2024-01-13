@@ -1,20 +1,12 @@
 const fs = require('fs');
 
 function readFileSync(filePath) {
-  try {
-    const data = fs.readFileSync(filePath, 'utf8');
-    return data;
-  } catch (error) {
-    throw error;
-  }
+  const data = fs.readFileSync(filePath, 'utf8');
+  return data;
 }
 
 async function writeFileSync(filePath, data) {
-  try {
-    fs.writeFileSync(filePath, data, 'utf8');
-  } catch (error) {
-    throw error;
-  }
+  fs.writeFileSync(filePath, data, 'utf8');
 }
 
 

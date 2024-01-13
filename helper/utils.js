@@ -4,14 +4,14 @@ const { startOfWeek, endOfWeek, format } = require('date-fns');
 function getGuildConfigForChoices(){
     let arrayWithKeyValue = [];
     if(guilds.length <= 0){
-        return arrayWithKeyValue
+        return arrayWithKeyValue;
     } 
 
     guilds.forEach((guildIdentifier)=>{
-        arrayWithKeyValue.push({name: guildIdentifier, value: guildIdentifier})
-    })
+        arrayWithKeyValue.push({name: guildIdentifier, value: guildIdentifier});
+    });
 
-    return arrayWithKeyValue
+    return arrayWithKeyValue;
 }
 
 function getMondayAndSunday() {
@@ -27,10 +27,10 @@ function getFormattedMondeyAndSunday(formatString = 'dd.MM.'){
     const mondayFormatted = format(monday, formatString);
     const sundayFormatted = format(sunday, formatString);
 
-    return {mondayFormatted, sundayFormatted}
+    return {mondayFormatted, sundayFormatted};
 }
 
 module.exports = {
     getGuildConfigForChoices: getGuildConfigForChoices,
     getFormattedMondeyAndSunday: getFormattedMondeyAndSunday
-}
+};

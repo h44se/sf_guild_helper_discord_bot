@@ -8,7 +8,7 @@ async function handleGuildGetCommand(server){
         const datajson = JSON.parse(data);
         return `Anzahl an gespeicherten Members: ${datajson.members.length}\nMembers: ${JSON.stringify(datajson.members)}`;
     }catch(error){
-        return 'Error while reading guild: ' + error
+        return 'Error while reading guild: ' + error;
     }
 }
 
@@ -24,7 +24,7 @@ module.exports = {
                 .addChoices(...getGuildConfigForChoices())
             ),
 	async execute(interaction) {
-        const server = interaction.options.getString('server')
+        const server = interaction.options.getString('server');
 		await interaction.reply(await handleGuildGetCommand(server));
 	},
 };

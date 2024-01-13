@@ -1,29 +1,29 @@
 const { SlashCommandBuilder } = require('discord.js');
 const { writeFileSync,readFileSync } = require('../helper/file-utils');
 const { userWithSavePermission } = require('../config.json');
-const { getGuildConfigForChoices, modifyValueOfArrayElementsWithWrongAmountOfPositions } = require('../helper/utils');
+const { getGuildConfigForChoices } = require('../helper/utils');
 const axios = require('axios');
 
 async function handleGuildSaveCommand(server, attachment){
    
     try{
         if(!attachment.name.endsWith('.json')){
-            throw 'Attachment has the wrong file format. Bot expects an .har file.'
+            throw 'Attachment has the wrong file format. Bot expects an .har file.';
         }
-        const url = attachment.url
+        const url = attachment.url;
 
-        let body = await axios.get(url).then(res => res.data)
+        let body = await axios.get(url).then(res => res.data);
 
-        if(!body.hasOwnProperty('players')){
-            throw 'Attachment is missing players array.'
+        if(!Object.prototype.hasOwnProperty.call(body, 'players')){
+            throw 'Attachment is missing players array.';
         }
 
-        if(!body.hasOwnProperty('groups')){
-            throw 'Attachment is missing groups array.'
+        if(!Object.prototype.hasOwnProperty.call(body, 'groups')){
+            throw 'Attachment is missing groups array.';
         }
 
         if(body.groups.length > 1){
-            throw 'Attachment contains more than one guild.'
+            throw 'Attachment contains more than one guild.';
         }
 
         //Even with the additionalfighters header inside the fight request there will be one player always missing, the one with the highest level. 
@@ -40,17 +40,17 @@ async function handleGuildSaveCommand(server, attachment){
 
         //if you want to ignore this whole thing exclude the option "ignore" in checkFight.js from the SlashCommandBuilder. We still store the player but don't use him
 
-        const playerLevels = body.groups[0].save.slice(64, 114).map(level => level % 1000)
-        const playerIndexWithHighestLevel = playerLevels.indexOf(Math.max(...playerLevels))
+        const playerLevels = body.groups[0].save.slice(64, 114).map(level => level % 1000);
+        const playerIndexWithHighestLevel = playerLevels.indexOf(Math.max(...playerLevels));
 
         let jsonForFile = {
             members: body.groups[0].names,
             memberWithHighestLevel: body.groups[0].names[playerIndexWithHighestLevel]
-        }
+        };
         //console.log(`player with max level: ${jsonForFile.memberWithHighestLevel} with level ${playerLevels[playerIndexWithHighestLevel]}`)
-        await writeFileSync(`./storage/${server}.json`,JSON.stringify(jsonForFile))
+        await writeFileSync(`./storage/${server}.json`,JSON.stringify(jsonForFile));
     }catch(error){
-        return 'Error while writing guild: ' + error
+        return 'Error while writing guild: ' + error;
     }
 
     try{
@@ -58,7 +58,7 @@ async function handleGuildSaveCommand(server, attachment){
         const datajson = JSON.parse(data);
         return `Anzahl an gespeicherten Members: ${datajson.members.length}\nMembers: ${JSON.stringify(datajson.members)}`;
     }catch(error){
-        return 'Error while reading guild: ' + error
+        return 'Error while reading guild: ' + error;
     }
 }
 

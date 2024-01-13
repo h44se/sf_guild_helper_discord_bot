@@ -1,20 +1,20 @@
 const { SlashCommandBuilder } = require('discord.js');
 const { readFileSync } = require('../helper/file-utils');
 const { getGuildConfigForChoices } = require('../helper/utils');
-const axios = require('axios')
+const axios = require('axios');
 
 async function handleCheckFightCommand(server, attachment, ignore){
     try{
         if(!attachment.name.endsWith('.har')){
-            throw 'Attachment has the wrong file format. Bot expects an .har file.'
+            throw 'Attachment has the wrong file format. Bot expects an .har file.';
         }
-        const url = attachment.url
+        const url = attachment.url;
 
-        let response = await axios.get(url).then(res => res.data)
-        let body = JSON.stringify(response)
+        let response = await axios.get(url).then(res => res.data);
+        let body = JSON.stringify(response);
 
         if(!body.includes('fightheader')){
-            throw 'Attachment does not contain a fight.'
+            throw 'Attachment does not contain a fight.';
         }
 
         const data = readFileSync(`./storage/${server}.json`);
@@ -22,15 +22,15 @@ async function handleCheckFightCommand(server, attachment, ignore){
        
         const missingMembers = guild.members.filter(member => {
             if(ignore && member == guild.memberWithHighestLevel){
-                return false
+                return false;
             }
-            return !(body.includes(`,${member},`) || body.includes(`/${member}/`))
+            return !(body.includes(`,${member},`) || body.includes(`/${member}/`));
         });
 
-        return `Von ${guild.members.length} Mitgliedern wurden nur ${guild.members.length - missingMembers.length} erkannt.\nEs fehlten: ${missingMembers.join(', ')}`
+        return `Von ${guild.members.length} Mitgliedern wurden nur ${guild.members.length - missingMembers.length} erkannt.\nEs fehlten: ${missingMembers.join(', ')}`;
 
     }catch(error){
-        return 'Error while checking a fight: ' + error
+        return 'Error while checking a fight: ' + error;
     }
 }
 

@@ -3,7 +3,7 @@ const path = require('node:path');
 
 const { Client, Collection, Events, GatewayIntentBits, REST, Routes } = require('discord.js'); 
 
-const commandFolder = '../commands'
+const commandFolder = '../commands';
 
 function getCommands(){
     let commandNames = [];
@@ -15,7 +15,7 @@ function getCommands(){
         const filePath = path.join(foldersPath, file);
         const command = require(filePath);
         if ('data' in command && 'execute' in command) {
-            console.log('Got command: ' + command.data.name)
+            console.log('Got command: ' + command.data.name);
             commandCollection.set(command.data.name, command);
             commandNames.push(command.data.toJSON());
         } else {
@@ -23,7 +23,7 @@ function getCommands(){
         }
     }
 
-    return {commandNames, commandCollection}
+    return {commandNames, commandCollection};
 }
 
 function startService(token, clientId){
@@ -52,7 +52,7 @@ function startService(token, clientId){
     })();
     //log that we have succesfully logged in into discord
     discord_client.once(Events.ClientReady, () => {
-        console.log(`discord | Ready! Logged in as ${discord_client.user.tag}`)
+        console.log(`discord | Ready! Logged in as ${discord_client.user.tag}`);
     });
     //handle incomming slash commands
     discord_client.on(Events.InteractionCreate, async interaction => {
