@@ -3,7 +3,7 @@ const { readFileSync } = require('../helper/file-utils');
 const { getGuildConfigForChoices } = require('../helper/utils');
 const axios = require('axios')
 
-async function handleCheckFightCommand(server, attachment){
+async function handleCheckFightCommand(server, attachment, ignore){
     try{
         if(!attachment.name.endsWith('.har')){
             throw 'Attachment has the wrong file format. Bot expects an .har file.'
@@ -20,11 +20,10 @@ async function handleCheckFightCommand(server, attachment){
         const data = readFileSync(`./storage/${server}.json`);
         const guild = JSON.parse(data);
        
-        //KNOWN ISSUE: The player who is on the last position for the fights and did not fought, will always be excluded from the saved report due playa.
-        //In such cases you need to exlude this member from your monitoring manually. 
-        //TODO: Maybe add such a option for the command like 
-        
         const missingMembers = guild.members.filter(member => {
+            if(ignore && member == guild.memberWithHighestLevel){
+                return false
+            }
             return !(body.includes(`,${member},`) || body.includes(`/${member}/`))
         });
 
@@ -46,13 +45,19 @@ module.exports = {
             .setRequired(true)
             .addChoices(...getGuildConfigForChoices())
             )
+        .addBooleanOption(option => option 
+            .setName('ignore')
+            .setDescription('Ignoriere den Spieler mit dem höchsten Level.')
+            .setRequired(true)
+            )
         .addAttachmentOption((option) => option
             .setRequired(true)
             .setName("file")
-            .setDescription("Die zu überprüfende .har Datei.\nhttps://tinyurl.com/amht3fuk")),
+            .setDescription("Die zu überprüfende .har Datei. https://tinyurl.com/amht3fuk")),
 	async execute(interaction) {
         const server = interaction.options.getString('server');
         const attachment = interaction.options.getAttachment("file");
-        await interaction.reply(await handleCheckFightCommand(server, attachment));
+        const ignore = interaction.options.getBoolean('ignore');
+        await interaction.reply(await handleCheckFightCommand(server, attachment, ignore));
 	},
 };
