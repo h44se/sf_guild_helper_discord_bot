@@ -1,5 +1,7 @@
 # Setup 
 
+0. Install node.js https://nodejs.org/en/download/ or use nvm https://github.com/nvm-sh/nvm
+0. get sure it is working with node -v
 1. Login into https://discord.com/developer
 2. Click "new Application"
 3. Click OAuth2
@@ -31,7 +33,7 @@ discord | Ready! Logged in as <yourbotname>#0038
 19. Invite the bot to your own server, use the following Link for this:
 https://discord.com/api/oauth2/authorize?client_id=<clientid>&permissions=<permissions from step 10>&scope=bot%20applications.commands
 
-ATTN: It may take a few minutes till the commands are visible or get changed after changes in the code.
+ATTN: It may take a few minutes till the commands are visible or get changed after changes in the code. Sometimes it also helps to restart the discord client.
 
 # Save Guild Members
 1. Go to https://sftools.mar21.eu/ -> Statistics -> Files
@@ -63,6 +65,9 @@ ATTN: You need to repeat this every time the members change in your guild.
 Von 50 Mitgliedern wurden nur 47 erkannt.
 Es fehlten: Karondor, TankHulk, Lasresvese
 ```
+
+Important: Since the addition of the fightadditionalplayers header inside the fight request, the player with the highest level will not be in this list if your guild is strong enough and he does not need to fight. For this reason we store the player with the highest level additionally to all players when using /savemembers and using this info in /checkfight if ignore is set to true. 
+This is kinda experimental at this point because i'm not entierly sure how the game handles this when multiple players will have the same level.. but i am optimistic that the current solution is also suitable for this
 
 # checkhistory
 Just a small helper command for myself to check how often people were not able to press two fucking buttons.. Input is a .txt file which looks like this:
