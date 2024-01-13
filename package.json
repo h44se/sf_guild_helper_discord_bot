@@ -9,11 +9,14 @@
     "dev": "nodemon --ignore storage/ index.js "
   },
   "author": "",
-  "license": "ISC",
+  "license": "MIT",
   "dependencies": {
     "axios": "^1.6.2",
     "date-fns": "^2.30.0",
     "discord.js": "^14.14.1",
     "nodemon": "^3.0.1"
+  },
+  "devDependencies": {
+    "eslint": "^8.56.0"
   }
 }
