@@ -21,7 +21,9 @@ Susi got developed on a rainy evening and is work in progress. There is not a lo
 - [ ] Use an discord Channel instead of a .txt file in /checkhistory
 - [ ] Change option called server to something like guild
 
-## Setup Discord Application
+## Setup
+
+### Setup Discord Application
 
 Before we start to configure, build and run our bot we need to register her on discord. For this please open
 <https://discord.com/login?redirect_to=%2Fdevelopers%2Fapplications>
@@ -35,7 +37,7 @@ On the same page we need to scroll down to "Message Content Intent" and activate
 
 Again, on the same page (Category Bot), scroll further down till you find "Bot Permissions" and activate the fields "Use Slash Commands" and "Send Messages" in the row "TEXT PERMISSIONS" and copy the PERMISSIONS INTEGER Below the checkboxes.
 
-## Setup config.json
+### Setup config.json
 
 In the same directory as this file you will find a `config.json.example`, please copy or rename this file to `config.json`.
 Replace the placeholder value for `token` with the token you copied earlier.
@@ -44,11 +46,11 @@ Modify the placeholder values for the `guild` array. At least one guild MUST BE 
 
 `userWithSavePermission` is a information i use right now to handle situations where the bot is accessible by a lot of users but only a few should write informations "into" the bot like the current guild officers. Like for `guilds` this is an array and can be filled up with a lot of discord user. For this i use the discord user id and to get this id you need to activate, as far as i know, the discord developer mode: <https://beebom.com/how-enable-disable-developer-mode-discord/> (Step 1 to 3). After this is done press right click on a member of your discord server to copy his id (should be the last option on the context menu) and paste it into the array of `userWithSavePermission`.
 
-## How can you run this bot now?
+### How can you run this bot now?
 
 Endless possibilities! You could run her locally on your pc from a cmdline, you could start her on an small server controlled through systemd and she is also prepared to run inside an Docker container.
 
-### Setup Docker
+#### Setup Docker
 
 IMHO one of the easiest things if you know what to do. If you want to try out docker please visit <https://www.docker.com/get-started/> and when you can run the following command
 
@@ -85,7 +87,7 @@ Successfully reloaded 5 application (/) commands.
 discord | Ready! Logged in as <yourbotname>#<id e.g. 4242>
 ```
 
-### Setup directly with node
+#### Setup directly with node
 
 Docker is cool because you don't need to install a lot of things but sometimes you can't use it like on older kernels or in some virtual envs..
 In such cases install node.js directly on your system. Please refer to <https://nodejs.org/en/download/> or <https://github.com/nvm-sh/nvm> and continue with this when you can successfully run `node -v`.
@@ -118,7 +120,7 @@ Successfully reloaded 5 application (/) commands.
 discord | Ready! Logged in as <yourbotname>#<id e.g. 4242>
 ```
 
-## Let the Bot land on your server
+### Let the Bot land on your server
 
 Nearly done! After our bot is running we can invite him onto one or multiple server. Do you remember the PERMISSIONS INTEGER you copied earlier in `Setup Discord Application`? Now we need this piece of information to let discord know with which privilegs we want to invite the bot on a server.
 
