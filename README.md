@@ -1,11 +1,11 @@
 # sf_guild_helper_discord_bot
 
 I'm not good with names. Lets call this Susi.
-Susi is a small private project of mine to support me in a Browser Game called Shakes & Fidget and it aims to help with one specific problem: Activity measurement of guild members in guild fights.
+Susi is a small project of mine to support me in a Browser Game called Shakes & Fidget and it aims to help with one specific problem: Activity measurement of guild members in guild fights.
 
 We all have this problem, some guild members are active, some are present and some are.. yeah. But it is hard to monitor which one nether signs up for guild fights and so this application was born. With the help of discord as a platform, sftools as a helper and .har files this discord bot is able to check which guild member(s) did not show up to guild fights.
 
-Be aware, this is not a automation or a "start and forget" application. You still need to capture the fights, update the list of guild members and need to feed the bot with fights. I just liked the interface discord is providing and the posibility to share this project through discord servers with different guilds.
+Be aware, this is not a automation or a "start and forget" application. You still need to capture the fights, update the list of guild members and need to feed the bot with fights.
 
 She got developed with the intent to use one instance of the bot for one or multiple guilds.
 
@@ -17,6 +17,9 @@ Susi got developed on a rainy evening and is work in progress. There is not a lo
 
 - [ ] Finish README
 - [ ] Add code documentation and remove german comments
+- [ ] Let the bot post automatically missing members in an discord channel after /checkfight
+- [ ] Use an discord Channel instead of a .txt file in /checkhistory
+- [ ] Change option called server to something like guild
 
 ## Setup Discord Application
 
@@ -131,11 +134,18 @@ You may need to login into Discord if you aren't already logged in, select the s
 
 ## How to use the bot?
 
-You may know that some bots use a command structure like `!ping` or `.ping` as interface - we don't do this here.
+You may know that some bots use a command structure like `!ping` or `.ping` in messages as interface - we don't do this here.
 
 We use Slashcommands and you can see and interact with them if you start to write a slash in the text input, an box with all available Bots and Commands should get opened. If you have a lot of bots on your server you can select your Bot on the left side of the box.
 
 ![Image of how the interaction box of discord should look like](./doc/bot_box.png)
+
+And if you selected the command you want to use (or wrote this command directly) you will see an interface for this command. Most of the times it will be something like the guild which will be used as reference, some options and depending on the command a file to transmit. Most of my options are configured as reguired, so you can't send the command with missing informations.
+If you edit one option you will most of the time see a list of choicec and below an small info what is here required.
+
+![Image of where to find informations about options](./doc/box_option_info.png)
+
+ Discords interface is very limiting on what we can display there and how long the text can be.. I tried to make any option and choice self explanatory but in cases where something is unclear feel free to get in touch with me.
 
 ## Commands
 
@@ -167,7 +177,11 @@ Every time the members of your guild change you need to do this step again.
 
 ### /checkfight
 
-TODO REWRITE
+Next to `/savemembers` the core command right now. After we have stored the information about our guild (name of every member and the name of the first highest member) we can check with this command which members were not participating in an given guild fight. To do this we need to capture ONE fight in an .har file.
+
+An explanation on how to do this you can find here [https://tinyurl.com/amht3fuk](https://tinyurl.com/amht3fuk)
+
+But as a small run down:
 
 1. Open the game
 2. open the dev tools and open the "Network" Tab
@@ -176,31 +190,40 @@ TODO REWRITE
 5. Clear in dev tools -> network the complete log
 6. press "show combat" in game
 7. save the requests as .har file
-8. Open Discord and go to the channels your bot lives
-9. write /checkfight , select an guild and select the created .har file and press enter
-10. After a short moment you should see something like
+
+After you have the .har file saved on your pc open discord and navigate to an server and channel where this bot is present and start writing `/checkfight`. A small box should appear to guide you through this process, enter the channel this .har file represents, enter if you want to automatically ignore the player with the highest level and add the saved .har file through the file browser and press enter.
+After an short moment you should get an response like
 
 ```txt
 Von 50 Mitgliedern wurden nur 47 erkannt.
-Es fehlten: Karondor, TankHulk, Lasresvese
+Es fehlten: Alfred, Thomas, Martha
 ```
 
-Important: Since the addition of the fightadditionalplayers header inside the fight request, the player with the highest level will not be in this list if your guild is strong enough and he does not need to fight. For this reason we store the player with the highest level additionally to all players when using /savemembers and using this info in /checkfight if ignore is set to true. 
-This is kinda experimental at this point because i'm not entierly sure how the game handles this when multiple players will have the same level.. but i am optimistic that the current solution is also suitable for this
+These players missed to register for the fight and you can do with this information now whatever you want.
+
+Some important informations:
+Since the addition of the fightadditionalplayers header inside the fight request, the player with the highest level will not be in this list if your guild is strong enough and he does not need to fight. For this reason we store the player with the highest level additionally to all players when using `/savemembers` and using this info in `/checkfight` if ignore is set to true.
+This is kinda experimental at this point because i'm not entierly sure how the game handles this when multiple players will have the same level.. but i am optimistic that the current solution is also suitable for this.
+
+I do not check if players were fighting with farm gear. I could do this but i think this is kinda unfair to players with an lower level because it is impossible to check this for players who did not fought in the fight.
+
+This whole check is right now only useful for fights where your guild is the attacker. To make this suitable for fights where your guild is the defender we need to save in `/savemembers` together with the names of every player the stats of these too and compare the stored stats with the stats inside the fight. This comes with additional pain because you need a very clean scan as data basis in `/savemembers` where everybody needs to wear there best gear. Otherwise the checks in `/checkfight` will be screwed. And, you need to refresh this data regualary to keep up with gear updates from players.
 
 ### /listmembers
 
-TODO
+With this command you can read out which member of an given guild are right now saved inside this bot. After the call the corresponding .json file in `./storage/` will be opened and the members array will be posted as response.
 
 ### /getpreset
 
-TODO
+In the way i use this bot i have for every week one post in an discord channel to monitor the activity. As i want to have old posts inside this channel still there after a new week begins i just create a new post which i will edit through an week and to not have to copy the old post, edit out the players and change the date i created this command. Call `/getpreset` and as reponse you get a text which you can copy and paste directly without additional work todo.
+
+This command and the response is tailored to me, so if you want to change it you can do this directly in `./services/discord/commands/getpreset.js`. Please be aware that the response is posted as a code block so that the formatting can be retained.
 
 ### /checkhistory
 
-TODO REWRITE
-
-Just a small helper command for myself to check how often people were not able to press two fucking buttons.. Input is a .txt file which looks like this:
+One times my guild leader asked me "which of our members is missing the most fights?" and i don't like to count this every time for myself and as i just copy and paste daily one or two fights i don't remember which member got written up the most. So for this i created this helper.
+To use it go to your channel / place where you write down every fight and every missing member and copy every fight to an `.txt` file.
+Stuff like the beginning of every day can stay in the file, other comments should be get deleted manually. THe file should look like:
 
 ```txt
 Mo: JustChris, Chris, WeißerAdler, oNxKz, Vinux42
@@ -212,7 +235,7 @@ Di: nein, Crankiee, oNxKz
 Mi: Vinux42
 ```
 
-Each line represents one fight, and as output you get something like
+Each line represents one fight, and as output after you called the command you get something like this:
 
 ```txt
 Ergebnis:
@@ -223,7 +246,11 @@ TankHulk: 7 (20%)
 InTrALeX: 6 (17%)
 ```
 
-Which represents how often members did not helped in guild fights. Only guild members who are currently in ./storage.<guild>.json get listed
+The amount of fights we checked (should be correlate with the amount of lines in your `.txt` file) and how many fights every player has missed and how many fights there were missed as a percentage of the total number of fights checked. Be aware:
+
+- Only players will appear who missed at least once
+- in my preset from `/getpreset` you will see i mark players who missed an fight but gave a notice prior with a small `*` behind the name. These will not counted in the amount of missed fights.
+- As we give the command the information about which guild we check only players who are currently in your guild (`./storage/<guild>.json`) are in this list.
 
 ## I added / changed commands and they do not get updated
 
