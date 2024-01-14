@@ -1,5 +1,5 @@
 const { SlashCommandBuilder } = require('discord.js');
-const { getFormattedMondeyAndSunday } = require('../helper/utils');
+const { getFormattedMondeyAndSunday } = require('../../../helper/utils');
 
 function generatePreset(){
     const { mondayFormatted, sundayFormatted } = getFormattedMondeyAndSunday();  

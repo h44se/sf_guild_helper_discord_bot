@@ -3,7 +3,7 @@ const path = require('node:path');
 
 const { Client, Collection, Events, GatewayIntentBits, REST, Routes } = require('discord.js'); 
 
-const commandFolder = '../commands';
+const commandFolder = './discord/commands';
 
 function getCommands(){
     let commandNames = [];

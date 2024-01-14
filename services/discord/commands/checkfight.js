@@ -1,6 +1,6 @@
 const { SlashCommandBuilder } = require('discord.js');
-const { readFileSync } = require('../helper/file-utils');
-const { getGuildConfigForChoices } = require('../helper/utils');
+const { readFileSync } = require('../../../helper/file-utils');
+const { getGuildConfigForChoices } = require('../../../helper/utils');
 const axios = require('axios');
 
 async function handleCheckFightCommand(server, attachment, ignore){

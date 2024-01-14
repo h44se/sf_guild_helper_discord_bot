@@ -1,7 +1,7 @@
 const { SlashCommandBuilder } = require('discord.js');
-const { writeFileSync,readFileSync } = require('../helper/file-utils');
-const { userWithSavePermission } = require('../config.json');
-const { getGuildConfigForChoices } = require('../helper/utils');
+const { writeFileSync,readFileSync } = require('../../../helper/file-utils');
+const { userWithSavePermission } = require('../../../config.json');
+const { getGuildConfigForChoices } = require('../../../helper/utils');
 const axios = require('axios');
 
 async function handleGuildSaveCommand(server, attachment){
