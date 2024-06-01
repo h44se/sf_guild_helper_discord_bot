@@ -3,6 +3,34 @@ const { readFileSync } = require('../../../helper/file-utils');
 const { getGuildConfigForChoices } = require('../../../helper/utils');
 const axios = require('axios');
 
+function findFightHeaders(obj, result = []) {
+    for (const key in obj) {
+      // eslint-disable-next-line no-prototype-builtins
+      if (obj.hasOwnProperty(key)) {
+        const value = obj[key];
+        if (typeof value === 'object' && value !== null) {
+          findFightHeaders(value, result);
+        } else if (key === 'text' && typeof value === 'string' && value.startsWith('fightheader')) {
+          result.push(value);
+        }
+      }
+    }
+    return result;
+  }
+
+function getFightOpponent(fight){
+    //split up complete fight into one before fightgroups and one after fightgroup
+    let splitted = fight.split("&fightgroups.r:");
+    //split up the part where we begin with the fightgroup into more parts,
+    //with the target to get only the fight participants
+    let group = splitted[1].split("&");
+    //split up participants 
+    // -> 13,34,guild1,guild2 into [13, 34, guild1, guild2]
+    let splitted_group = group[0].split(",");
+    //return last guild as this should always the opponent
+    return splitted_group.at(-1);
+}
+
 async function handleCheckFightCommand(server, attachment, ignore){
     try{
         if(!attachment.name.endsWith('.har')){
@@ -19,16 +47,25 @@ async function handleCheckFightCommand(server, attachment, ignore){
 
         const data = readFileSync(`./storage/${server}.json`);
         const guild = JSON.parse(data);
+
+        let entries = response["log"]["entries"];
+        let fights = findFightHeaders(entries);
+
+        let result = `Anzahl erkannter Kämpfe: ${fights.length}`;
+        let count = 1;
+   
+        for(const fight of fights){
+            const missingMembers = guild.members.filter(member => {
+                if(ignore && member == guild.memberWithHighestLevel){
+                    return false;
+                }
+                return !(fight.includes(`,${member},`) || fight.includes(`/${member}/`));
+            });
+            result += `\n\nKampf #${count++} gegen ${getFightOpponent(fight)}:`;
+            result += `\nVon ${guild.members.length} Mitgliedern wurden nur ${guild.members.length - missingMembers.length} erkannt.\nEs fehlten: ${missingMembers.join(', ')}`;
+        }
        
-        const missingMembers = guild.members.filter(member => {
-            if(ignore && member == guild.memberWithHighestLevel){
-                return false;
-            }
-            return !(body.includes(`,${member},`) || body.includes(`/${member}/`));
-        });
-
-        return `Von ${guild.members.length} Mitgliedern wurden nur ${guild.members.length - missingMembers.length} erkannt.\nEs fehlten: ${missingMembers.join(', ')}`;
-
+        return result;
     }catch(error){
         return 'Error while checking a fight: ' + error;
     }

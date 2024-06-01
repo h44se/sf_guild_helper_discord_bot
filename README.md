@@ -3,7 +3,7 @@
 I'm not good with names. Lets call this Susi.
 Susi is a small project of mine to support me in a Browser Game called Shakes & Fidget and it aims to help with one specific problem: Activity measurement of guild members in guild fights.
 
-We all have this problem, some guild members are active, some are present and some are.. yeah. But it is hard to monitor which one nether signs up for guild fights and so this application was born. With the help of discord as a platform, sftools as a helper and .har files this discord bot is able to check which guild member(s) did not show up to guild fights.
+We all have this problem, some guild members are active, some are present and some are.. yeah. But it is hard to monitor which one never signs up for guild fights and so this application was born. With the help of discord as a platform, sftools as a helper and .har files this discord bot is able to check which guild member(s) did not show up to guild fights.
 
 Be aware, this is not a automation or a "start and forget" application. You still need to capture the fights, update the list of guild members and need to feed the bot with fights.
 
