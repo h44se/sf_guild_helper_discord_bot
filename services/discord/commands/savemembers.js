@@ -47,6 +47,24 @@ async function handleGuildSaveCommand(server, attachment){
             members: body.groups[0].names,
             memberWithHighestLevel: body.groups[0].names[playerIndexWithHighestLevel]
         };
+
+        //check if at least n members of the new file are in the old one to prevent accidents 
+        const current_data = readFileSync(`./storage/${server}.json`);
+        const current_datajson = JSON.parse(current_data);
+        const current_members = current_datajson.members;
+        const EXPECTED_AMOUNT_OF_SAME_MEMBERS = 5;
+        let amount_of_same_members = 0;
+
+        current_members.forEach((member) => {
+            if(jsonForFile.members.includes(member)){
+                amount_of_same_members++;
+            }
+        });
+
+        if(amount_of_same_members < EXPECTED_AMOUNT_OF_SAME_MEMBERS){
+            throw new Error(`Achtung, Daten können nicht gespeichert werden. Daten haben sich zu stark geändert, bitte stelle sicher das du versuchst die richtige Gilde zu speichern`);
+        }
+        
         //console.log(`player with max level: ${jsonForFile.memberWithHighestLevel} with level ${playerLevels[playerIndexWithHighestLevel]}`)
         await writeFileSync(`./storage/${server}.json`,JSON.stringify(jsonForFile));
     }catch(error){
@@ -77,12 +95,12 @@ module.exports = {
             .setName("file")
             .setDescription('Der exportierte Scan einer kompletten Gilde.')),
 	async execute(interaction) {
-        if(userWithSavePermission.includes(interaction.user.id)){
-            const server = interaction.options.getString('server');
-            const attachment = interaction.options.getAttachment("file");
-            await interaction.reply(await handleGuildSaveCommand(server, attachment));
-        }else{
+        if(!userWithSavePermission.includes(interaction.user.id)){
             interaction.reply("Ich weiß nicht wer du Lümmel bist, die Chance ist hoch das du hier nichts zu suchen hast. Mach dich vom Aacker oder nerv astro. Danke. ");
+            return;
         }
+        const server = interaction.options.getString('server');
+        const attachment = interaction.options.getAttachment("file");
+        await interaction.reply(await handleGuildSaveCommand(server, attachment));
 	},
 };

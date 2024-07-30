@@ -51,7 +51,7 @@ async function handleCheckFightCommand(server, attachment, ignore){
         let entries = response["log"]["entries"];
         let fights = findFightHeaders(entries);
 
-        let result = `Anzahl erkannter Kämpfe: ${fights.length}`;
+        let result = "";
         let count = 1;
    
         for(const fight of fights){
@@ -61,7 +61,7 @@ async function handleCheckFightCommand(server, attachment, ignore){
                 }
                 return !(fight.includes(`,${member},`) || fight.includes(`/${member}/`));
             });
-            result += `\n\nKampf #${count++} gegen ${getFightOpponent(fight)}:`;
+            result += `\n\n#${count++} gegen ${getFightOpponent(fight)}:`;
             result += `\nVon ${guild.members.length} Mitgliedern wurden nur ${guild.members.length - missingMembers.length} erkannt.\nEs fehlten: ${missingMembers.join(', ')}`;
         }
        
@@ -95,6 +95,12 @@ module.exports = {
         const server = interaction.options.getString('server');
         const attachment = interaction.options.getAttachment("file");
         const ignore = interaction.options.getBoolean('ignore');
-        await interaction.reply(await handleCheckFightCommand(server, attachment, ignore));
+        let result = await handleCheckFightCommand(server, attachment, ignore);
+        if(result.length >= 2000){
+            await interaction.reply(`Sorry, die Kämpfe wurden zwar erfolgreich ausgewertet, aber die Antwort ist zu lang. Bitte versuche die Kämpfe aufzuteilen, danke. ${result.length} > 2000`);
+        }else{
+            await interaction.reply(result);
+        }
+        
 	},
 };
