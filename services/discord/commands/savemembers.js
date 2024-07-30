@@ -3,6 +3,7 @@ const { writeFileSync,readFileSync } = require('../../../helper/file-utils');
 const { userWithSavePermission } = require('../../../config.json');
 const { getGuildConfigForChoices } = require('../../../helper/utils');
 const axios = require('axios');
+const fs = require('fs');
 
 async function handleGuildSaveCommand(server, attachment){
    
@@ -49,21 +50,25 @@ async function handleGuildSaveCommand(server, attachment){
         };
 
         //check if at least n members of the new file are in the old one to prevent accidents 
-        const current_data = readFileSync(`./storage/${server}.json`);
-        const current_datajson = JSON.parse(current_data);
-        const current_members = current_datajson.members;
-        const EXPECTED_AMOUNT_OF_SAME_MEMBERS = 5;
-        let amount_of_same_members = 0;
-
-        current_members.forEach((member) => {
-            if(jsonForFile.members.includes(member)){
-                amount_of_same_members++;
-            }
-        });
-
-        if(amount_of_same_members < EXPECTED_AMOUNT_OF_SAME_MEMBERS){
-            throw new Error(`Achtung, Daten können nicht gespeichert werden. Daten haben sich zu stark geändert, bitte stelle sicher das du versuchst die richtige Gilde zu speichern`);
+        let file_name = `./storage/${server}.json`;
+        if(fs.existsSync(file_name)){ //in case of missing file, we do nothing
+            const current_data = readFileSync(file_name);
+            const current_datajson = JSON.parse(current_data);
+            const current_members = current_datajson.members;
+            const EXPECTED_AMOUNT_OF_SAME_MEMBERS = 5;
+            let amount_of_same_members = 0;
+    
+            current_members.forEach((member) => {
+                if(jsonForFile.members.includes(member)){
+                    amount_of_same_members++;
+                }
+            });
+    
+            if(amount_of_same_members < EXPECTED_AMOUNT_OF_SAME_MEMBERS){
+                throw new Error(`Achtung, Daten können nicht gespeichert werden. Daten haben sich zu stark geändert, bitte stelle sicher das du versuchst die richtige Gilde zu speichern`);
+            }  
         }
+
         
         //console.log(`player with max level: ${jsonForFile.memberWithHighestLevel} with level ${playerLevels[playerIndexWithHighestLevel]}`)
         await writeFileSync(`./storage/${server}.json`,JSON.stringify(jsonForFile));
