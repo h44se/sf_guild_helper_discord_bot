@@ -2,6 +2,8 @@ const { SlashCommandBuilder } = require('discord.js');
 const { readFileSync } = require('../../../helper/file-utils');
 const { getGuildConfigForChoices } = require('../../../helper/utils');
 const axios = require('axios');
+const fs = require('fs');
+const path = require('path');
 
 function findFightHeaders(obj, result = []) {
     for (const key in obj) {
@@ -97,7 +99,20 @@ module.exports = {
         const ignore = interaction.options.getBoolean('ignore');
         let result = await handleCheckFightCommand(server, attachment, ignore);
         if(result.length >= 2000){
-            await interaction.reply(`Sorry, die Kämpfe wurden zwar erfolgreich ausgewertet, aber die Antwort ist zu lang. Bitte versuche die Kämpfe aufzuteilen, danke. ${result.length} > 2000`);
+            const timestamp = Date.now();
+            const fileName = `result-${timestamp}.txt`;
+            const filePath = path.join(__dirname, fileName);
+            fs.writeFileSync(filePath, result);
+            try{
+                await interaction.reply({
+                    content: 'Das Ergebnis ist zu lang, um es direkt anzuzeigen. Hier ist eine Datei mit dem vollständigen Ergebnis:',
+                    files: [filePath]
+                });
+            } finally {
+                fs.unlinkSync(filePath);
+            }
+
+            
         }else{
             await interaction.reply(result);
         }
