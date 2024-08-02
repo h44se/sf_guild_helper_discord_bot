@@ -62,7 +62,8 @@ successfully continue. After your local instance of docker is running please cop
 
 ```bash
 docker build -t sf_discord_bot .
-docker run --restart=always --name sf_discord_bot -v sf_discord_bot_storage:/usr/src/app/storage -d sf_discord_bot
+docker run --restart=always --name sf_discord_bot -v <absolute_workdir>/storage/:/usr/src/app/storage -v <absolute_workdir>/config.json:/usr/src/app/config.json -d sf_discord_bot
+# get sure to adjust the mounting paths according to your file system
 ```
 
 In theory everything should working now and with the command
@@ -85,6 +86,25 @@ Got command: savemembers
 Started refreshing 5 application (/) commands.
 Successfully reloaded 5 application (/) commands.
 discord | Ready! Logged in as <yourbotname>#<id e.g. 4242>
+```
+
+### Update
+
+Of course from time to time we want to update his software
+
+```bash
+# move into the workdir of this bot
+cd <workdir>
+# pull all updates through git
+git pull
+# remove old container
+docker rm sf_discord_bot
+# rebuild
+docker build -t sf_discord_bot .
+# run
+docker run --restart=always --name sf_discord_bot -v <absolute_workdir>/storage/:/usr/src/app/storage -v <absolute_workdir>/config.json:/usr/src/app/config.json -d sf_discord_bot
+# done, now the bot should be running again. Check this with logs command
+docker logs sf_discord_bot
 ```
 
 #### Setup directly with node

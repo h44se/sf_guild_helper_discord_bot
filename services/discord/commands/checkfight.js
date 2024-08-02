@@ -111,8 +111,6 @@ module.exports = {
             } finally {
                 fs.unlinkSync(filePath);
             }
-
-            
         }else{
             await interaction.reply(result);
         }
