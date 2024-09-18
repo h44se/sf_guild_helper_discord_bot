@@ -21,16 +21,20 @@ function findFightHeaders(obj, result = []) {
   }
 
 function getFightOpponent(fight){
-    //split up complete fight into one before fightgroups and one after fightgroup
-    let splitted = fight.split("&fightgroups.r:");
-    //split up the part where we begin with the fightgroup into more parts,
-    //with the target to get only the fight participants
-    let group = splitted[1].split("&");
-    //split up participants 
-    // -> 13,34,guild1,guild2 into [13, 34, guild1, guild2]
-    let splitted_group = group[0].split(",");
-    //return last guild as this should always the opponent
-    return splitted_group.at(-1);
+    try{
+        //split up complete fight into one before fightgroups and one after fightgroup
+        let splitted = fight.split("&fightgroups.r:");
+        //split up the part where we begin with the fightgroup into more parts,
+        //with the target to get only the fight participants
+        let group = splitted[1].split("&");
+        //split up participants 
+        // -> 13,34,guild1,guild2 into [13, 34, guild1, guild2]
+        let splitted_group = group[0].split(",");
+        //return last guild as this should always the opponent
+        return splitted_group.at(-1);
+    }catch(e){
+        return "RAID";
+    }
 }
 
 async function handleCheckFightCommand(server, attachment, ignore){

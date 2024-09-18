@@ -95,6 +95,8 @@ Of course from time to time we want to update his software
 ```bash
 # move into the workdir of this bot
 cd <workdir>
+# stop running service
+docker stop sf_discord_bot
 # pull all updates through git
 git pull
 # remove old container
