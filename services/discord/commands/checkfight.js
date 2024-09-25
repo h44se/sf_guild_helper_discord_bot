@@ -65,7 +65,7 @@ async function handleCheckFightCommand(server, attachment, ignore){
                 if(ignore && member == guild.memberWithHighestLevel){
                     return false;
                 }
-                return !(fight.includes(`,${member},`) || fight.includes(`/${member}/`));
+                return !(fight.includes(`,${member},`) || fight.includes(`/${member}/`) || fight.includes(`:${member},`));
             });
             result += `\n\n#${count++} gegen ${getFightOpponent(fight)}:`;
             result += `\nVon ${guild.members.length} Mitgliedern wurden nur ${guild.members.length - missingMembers.length} erkannt.\nEs fehlten: ${missingMembers.join(', ')}`;
